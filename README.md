@@ -1,1 +1,3 @@
-# szamitogepi_grafika2022
+# Számítógép grafika 2022
+
+Beadandó és órai munka
