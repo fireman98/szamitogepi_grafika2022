@@ -1,0 +1,1 @@
+# szamitogepi_grafika2022
