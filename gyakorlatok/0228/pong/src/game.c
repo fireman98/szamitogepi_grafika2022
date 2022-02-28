@@ -59,6 +59,12 @@ void handle_game_events(Game *game)
             case SDL_SCANCODE_S:
                 set_left_pad_speed(&(game->pong), +100);
                 break;
+            case SDL_SCANCODE_KP_PLUS:
+                set_ball_radius(&(game->pong.ball), (int)game->pong.ball.radius + 1);
+                break;
+            case SDL_SCANCODE_KP_MINUS:
+                set_ball_radius(&(game->pong.ball), (int)game->pong.ball.radius - 1);
+                break;
             default:
                 break;
             }

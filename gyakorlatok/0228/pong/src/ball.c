@@ -3,6 +3,15 @@
 #include <GL/gl.h>
 
 #include <math.h>
+#include <stdlib.h>
+
+#ifndef min
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
+#ifndef max
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#endif
 
 int ball_speed = 300;
 
@@ -19,6 +28,11 @@ void set_ball_position(Ball *ball, int x, int y)
 {
     ball->x = x;
     ball->y = y;
+}
+
+void set_ball_radius(Ball *ball, int radius)
+{
+    ball->radius = max(min(radius, 100), 30);
 }
 
 void stop_ball(Ball *ball)
