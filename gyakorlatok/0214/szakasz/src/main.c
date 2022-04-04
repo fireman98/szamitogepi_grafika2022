@@ -65,7 +65,8 @@ int main(int argc, char *argv[])
   int i;
   struct Szakasz sz1;
   struct Szakasz szakaszok[1];
-  bool draw_sz1 = true;
+  struct Point pointer;
+  bool need_to_draw_sz1 = true;
 
   int mouseX;
   int mouseY;
@@ -121,15 +122,15 @@ int main(int argc, char *argv[])
         if (event.button.button == SDL_BUTTON_LEFT)
         {
           SDL_GetMouseState(&mouseX, &mouseY);
-          struct Point p = transformToOpenglCoordinates(mouseX, mouseY);
-          printf("MouseState: %d %d %.2f %.2f\n", mouseX, mouseY, p.x, p.y);
-          sz1.x0 = p.x;
-          sz1.y0 = p.y;
+          pointer = transformToOpenglCoordinates(mouseX, mouseY);
+          printf("MouseState: %d %d %.2f %.2f\n", mouseX, mouseY, pointer.x, pointer.y);
+          sz1.x0 = pointer.x;
+          sz1.y0 = pointer.y;
         }
 
         if (event.button.button == SDL_BUTTON_RIGHT)
         {
-          draw_sz1 = false;
+          need_to_draw_sz1 = false;
         }
         break;
 
@@ -142,7 +143,7 @@ int main(int argc, char *argv[])
     //    glRotatef(0.1, 0, 0, 1);
 
     glClear(GL_COLOR_BUFFER_BIT);
-    if (draw_sz1)
+    if (need_to_draw_sz1)
       drawLine(&sz1);
 
     SDL_GL_SwapWindow(window);
