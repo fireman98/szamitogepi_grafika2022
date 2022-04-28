@@ -28,15 +28,15 @@ void init_scene(Scene *scene)
     scene->lighting.ambient_light[2] = 1.0f;
     scene->lighting.ambient_light[3] = 1.0f;
 
-    scene->lighting.diffuse_light[0] = 1.0f;
-    scene->lighting.diffuse_light[1] = 1.0f;
-    scene->lighting.diffuse_light[2] = 1.0f;
-    scene->lighting.diffuse_light[3] = 1.0f;
+    scene->lighting.diffuse_light[0] = 0.0f;
+    scene->lighting.diffuse_light[1] = 0.0f;
+    scene->lighting.diffuse_light[2] = 0.0f;
+    scene->lighting.diffuse_light[3] = 0.0f;
 
-    scene->lighting.specular_light[0] = 1.0f;
-    scene->lighting.specular_light[1] = 1.0f;
-    scene->lighting.specular_light[2] = 1.0f;
-    scene->lighting.specular_light[3] = 1.0f;
+    scene->lighting.specular_light[0] = 0.0f;
+    scene->lighting.specular_light[1] = 0.0f;
+    scene->lighting.specular_light[2] = 0.0f;
+    scene->lighting.specular_light[3] = 0.0f;
 
     scene->lighting.position[0] = 10.0f;
     scene->lighting.position[1] = 0.0f;

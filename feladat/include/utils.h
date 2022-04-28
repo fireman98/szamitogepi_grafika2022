@@ -1,5 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
+#include <GL/gl.h>
 
 /**
  * GLSL-like three dimensional vector
@@ -64,5 +65,11 @@ typedef struct Lighting
  * Calculates radian from degree.
  */
 double degree_to_radian(double degree);
+
+typedef struct
+{
+    GLuint front, back, left, right, top, bottom;
+    vec3 size;
+} Room;
 
 #endif /* UTILS_H */

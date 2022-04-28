@@ -27,6 +27,8 @@ void init_app(App *app, int width, int height)
         return;
     }
 
+    SDL_SetWindowResizable(app->window, TRUE);
+
     inited_loaders = IMG_Init(IMG_INIT_PNG);
     if (inited_loaders == 0)
     {

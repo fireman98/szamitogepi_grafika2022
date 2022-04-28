@@ -9,6 +9,7 @@ void init_app(App *app, int width, int height)
     int inited_loaders;
 
     app->is_running = false;
+    app->uptime = 0.0;
 
     error_code = SDL_Init(SDL_INIT_EVERYTHING);
     if (error_code != 0)
@@ -95,14 +96,13 @@ void reshape(GLsizei width, GLsizei height)
         x = 0;
         y = (height - h) / 2;
     }
-
     glViewport(x, y, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(
         -.08, .08,
         -.06, .06,
-        .1, 10);
+        .1, 5000);
 }
 
 void handle_app_events(App *app)
@@ -126,22 +126,22 @@ void handle_app_events(App *app)
                 app->is_running = false;
                 break;
             case SDL_SCANCODE_W:
-                set_camera_speed(&(app->camera), 1);
+                app->camera.move_forward = true;
                 break;
             case SDL_SCANCODE_S:
-                set_camera_speed(&(app->camera), -1);
+                app->camera.move_backward = true;
                 break;
             case SDL_SCANCODE_A:
-                set_camera_side_speed(&(app->camera), 1);
+                app->camera.move_left = true;
                 break;
             case SDL_SCANCODE_D:
-                set_camera_side_speed(&(app->camera), -1);
+                app->camera.move_right = true;
                 break;
             case SDL_SCANCODE_LSHIFT:
-                set_camera_vertical_speed(&(app->camera), 1);
+                // set_camera_vertical_speed(&(app->camera), 1.0);
                 break;
             case SDL_SCANCODE_LCTRL:
-                set_camera_vertical_speed(&(app->camera), -1);
+                // set_camera_vertical_speed(&(app->camera), -1.0);
                 break;
             // TODO: a lightningnak is legyen speedje
             case SDL_SCANCODE_KP_4:
@@ -170,16 +170,19 @@ void handle_app_events(App *app)
             switch (event.key.keysym.scancode)
             {
             case SDL_SCANCODE_W:
+                app->camera.move_forward = false;
+                break;
             case SDL_SCANCODE_S:
-                set_camera_speed(&(app->camera), 0);
+                app->camera.move_backward = false;
                 break;
             case SDL_SCANCODE_A:
+                app->camera.move_left = false;
+                break;
             case SDL_SCANCODE_D:
-                set_camera_side_speed(&(app->camera), 0);
+                app->camera.move_right = false;
                 break;
             case SDL_SCANCODE_LSHIFT:
             case SDL_SCANCODE_LCTRL:
-                set_camera_vertical_speed(&(app->camera), 0);
                 break;
             default:
                 break;
@@ -190,7 +193,8 @@ void handle_app_events(App *app)
             break;
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&x, &y);
-            rotate_camera(&(app->camera), mouse_x - x, mouse_y - y);
+            if (is_mouse_down)
+                rotate_camera(&(app->camera), mouse_x - x, mouse_y - y);
             mouse_x = x;
             mouse_y = y;
             break;
@@ -215,7 +219,7 @@ void update_app(App *app)
     elapsed_time = current_time - app->uptime;
     app->uptime = current_time;
 
-    update_camera(&(app->camera), elapsed_time);
+    update_camera(&(app->camera), elapsed_time, &(app->scene.room));
     update_scene(&(app->scene), elapsed_time);
 }
 

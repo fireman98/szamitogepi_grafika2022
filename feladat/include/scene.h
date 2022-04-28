@@ -3,6 +3,7 @@
 
 #include "camera.h"
 #include "texture.h"
+#include "utils.h"
 
 #include <obj/model.h>
 
@@ -17,12 +18,6 @@ typedef struct Entity
     vec3 speed;
 
 } Entity;
-
-typedef struct
-{
-    GLuint front, back, left, right, top, bottom;
-    vec3 size;
-} Room;
 
 typedef struct Scene
 {

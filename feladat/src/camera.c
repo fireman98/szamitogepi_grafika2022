@@ -1,5 +1,4 @@
 #include "camera.h"
-
 #include <GL/gl.h>
 
 #include <math.h>
@@ -7,29 +6,70 @@
 void init_camera(Camera *camera)
 {
     camera->position.x = 0.0;
-    camera->position.y = 0.0;
-    camera->position.z = 1.0;
+    camera->position.y = 1.0;
+    camera->position.z = 0.0;
     camera->rotation.x = 0.0;
     camera->rotation.y = 0.0;
-    camera->rotation.z = 0.0;
+    camera->rotation.z = -180.0;
     camera->speed.x = 0.0;
-    camera->speed.y = 0.0;
+    camera->speed.y = -5.0;
     camera->speed.z = 0.0;
+    camera->head_level = 50.0;
 }
 
-void update_camera(Camera *camera, double time)
+void update_camera(Camera *camera, double time, Room *room)
 {
-    double angle;
-    double side_angle;
 
-    angle = degree_to_radian(camera->rotation.z);
-    side_angle = degree_to_radian(camera->rotation.z + 90.0);
+    double distance, move_distance;
 
-    camera->position.x += cos(angle) * camera->speed.y * time;
-    camera->position.y += sin(angle) * camera->speed.y * time;
-    camera->position.x += cos(side_angle) * camera->speed.x * time;
-    camera->position.y += sin(side_angle) * camera->speed.x * time;
-    camera->position.z += camera->speed.z * time;
+    distance = time * 10.0;
+    move_distance = distance * 20;
+
+    double speed_diff = pow(0.01036955548946418186686576786732, time);
+
+    // Levegő miatti lassulás
+    camera->speed.x *= speed_diff;
+    camera->speed.y *= speed_diff;
+    camera->speed.z *= speed_diff;
+
+    move_camera_x(camera, distance * camera->speed.x, room);
+    move_camera_y(camera, distance * camera->speed.y, room);
+    move_camera_z(camera, distance * camera->speed.z, room);
+
+    if (camera->position.y > camera->head_level)
+    {
+        camera->speed.y -= time * 1.0;
+    }
+
+    if (camera->move_forward == true)
+    {
+        double angle = degree_to_radian(camera->rotation.z);
+        camera->speed.z -= cos(angle) * move_distance;
+        camera->speed.x -= sin(angle) * move_distance;
+    }
+
+    if (camera->move_backward == true)
+    {
+        double angle = degree_to_radian(camera->rotation.z);
+        camera->speed.z += cos(angle) * move_distance;
+        camera->speed.x += sin(angle) * move_distance;
+    }
+
+    if (camera->move_left == true)
+    {
+        double angle = degree_to_radian(camera->rotation.z + 90.0);
+        camera->speed.z -= cos(angle) * move_distance;
+        camera->speed.x -= sin(angle) * move_distance;
+    }
+
+    if (camera->move_right == true)
+    {
+        double angle = degree_to_radian(camera->rotation.z - 90.0);
+        camera->speed.z -= cos(angle) * move_distance;
+        camera->speed.x -= sin(angle) * move_distance;
+    }
+
+    printf("%.2f %.2f %.2f\n", camera->position.x, camera->position.y, camera->position.z);
 }
 
 void set_view(const Camera *camera)
@@ -37,8 +77,8 @@ void set_view(const Camera *camera)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glRotatef(-(camera->rotation.x + 90), 1.0, 0, 0);
-    glRotatef(-(camera->rotation.z - 90), 0, 0, 1.0);
+    glRotatef(-(camera->rotation.x), 1.0, 0, 0);
+    glRotatef(-(camera->rotation.z), 0, 1.0, 0);
     glTranslatef(-camera->position.x, -camera->position.y, -camera->position.z);
 }
 
@@ -68,17 +108,79 @@ void rotate_camera(Camera *camera, double horizontal, double vertical)
     }
 }
 
-void set_camera_speed(Camera *camera, double speed)
+void step_camera_forward(Camera *camera, double time)
 {
-    camera->speed.y = speed;
+    double distance = time * 10.0;
+    double move_distance = distance * 20;
+    double angle = degree_to_radian(camera->rotation.z);
+    camera->speed.z -= cos(angle) * move_distance;
+    camera->speed.x -= sin(angle) * move_distance;
 }
 
-void set_camera_side_speed(Camera *camera, double speed)
+void step_camera_backward(Camera *camera)
 {
-    camera->speed.x = speed;
 }
 
-void set_camera_vertical_speed(Camera *camera, double speed)
+void step_camera_left(Camera *camera)
 {
-    camera->speed.z = speed;
+}
+
+void step_camera_right(Camera *camera)
+{
+}
+
+void jump_camera(Camera *camera)
+{
+}
+
+void move_camera_x(struct Camera *camera, double distance, Room *room)
+{
+    camera->position.x += distance;
+    can_move(camera, room);
+}
+
+void move_camera_y(struct Camera *camera, double distance, Room *room)
+{
+    camera->position.y += distance;
+    can_move(camera, room);
+}
+
+void move_camera_z(struct Camera *camera, double distance, Room *room)
+{
+    camera->position.z += distance;
+    can_move(camera, room);
+}
+
+void can_move(struct Camera *camera, Room *room)
+{
+    if (camera->position.x > room->size.x)
+    {
+        camera->position.x = room->size.x;
+    }
+
+    if (camera->position.x < -room->size.x)
+    {
+        camera->position.x = -room->size.x;
+    }
+
+    if (camera->position.y > room->size.y)
+    {
+        camera->position.y = room->size.y;
+    }
+
+    if (camera->position.y < camera->head_level)
+    {
+        camera->position.y = camera->head_level;
+        camera->speed.y = 0;
+    }
+
+    if (camera->position.z > room->size.z)
+    {
+        camera->position.z = room->size.z;
+    }
+
+    if (camera->position.z < -room->size.z)
+    {
+        camera->position.z = -room->size.z;
+    }
 }

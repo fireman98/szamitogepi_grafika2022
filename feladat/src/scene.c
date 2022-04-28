@@ -23,22 +23,22 @@ void init_scene(Scene *scene)
     scene->room.top = load_texture("assets//textures//wall.jpg");
     scene->room.bottom = load_texture("assets//textures//wall.jpg");
 
-    scene->room.size.x = 4.8;
-    scene->room.size.y = 8.0;
-    scene->room.size.z = 2.0;
+    scene->room.size.x = 2400.0;
+    scene->room.size.y = 400.0;
+    scene->room.size.z = 1000.0;
 
     scene->ball.position.x = scene->ball.position.y = scene->ball.position.z = 0;
 
-    scene->material.ambient.red = 0.0;
-    scene->material.ambient.green = 0.0;
-    scene->material.ambient.blue = 0.0;
+    scene->material.ambient.red = 1.0;
+    scene->material.ambient.green = 1.0;
+    scene->material.ambient.blue = 1.0;
 
     scene->material.diffuse.red = 1.0;
     scene->material.diffuse.green = 1.0;
     scene->material.diffuse.blue = 1.0;
 
-    scene->material.specular.red = 0.0;
-    scene->material.specular.green = 0.0;
+    scene->material.specular.red = 1.0;
+    scene->material.specular.green = 1.0;
     scene->material.specular.blue = 1.0;
 
     scene->material.shininess = 127.0;
@@ -122,19 +122,15 @@ void render_scene(const Scene *scene)
 {
     set_material(&(scene->material));
     set_lighting(&(scene->lighting));
-    render_environment(scene);
     render_entity(&(scene->sun));
     render_entity(&(scene->ball));
+    render_environment(scene);
 }
 
 void render_entity(Entity *entity)
 {
     glBindTexture(GL_TEXTURE_2D, entity->texture);
     glPushMatrix();
-    glScalef(
-        0.1f,
-        0.1f,
-        0.1f);
     glTranslatef(entity->position.x, entity->position.y, entity->position.z);
     draw_model(&(entity->model));
 
@@ -151,7 +147,6 @@ void render_environment(const Scene *scene)
 
     glMaterialfv(GL_FRONT, GL_DIFFUSE, zeros);
     glMaterialfv(GL_FRONT, GL_AMBIENT, ones);
-
     draw_room_left(scene->room);
     draw_room_right(scene->room);
     draw_room_front(scene->room);
