@@ -15,6 +15,7 @@ void init_camera(Camera *camera)
     camera->speed.y = -5.0;
     camera->speed.z = 0.0;
     camera->head_level = 50.0;
+    camera->move_forward = camera->move_backward = camera->move_left = camera->move_right = camera->move_up = camera->kick = false;
 }
 
 void update_camera(Camera *camera, double time, Room *room)
@@ -36,9 +37,14 @@ void update_camera(Camera *camera, double time, Room *room)
     move_camera_y(camera, distance * camera->speed.y, room);
     move_camera_z(camera, distance * camera->speed.z, room);
 
+    if (camera->move_up && camera->position.y < camera->head_level + 15.0) // Can jump
+    {
+        camera->speed.y += 10;
+    }
+
     if (camera->position.y > camera->head_level)
     {
-        camera->speed.y -= time * 1.0;
+        camera->speed.y -= time * 100.0;
     }
 
     if (camera->move_forward == true)
@@ -68,8 +74,6 @@ void update_camera(Camera *camera, double time, Room *room)
         camera->speed.z -= cos(angle) * move_distance;
         camera->speed.x -= sin(angle) * move_distance;
     }
-
-    printf("%.2f %.2f %.2f\n", camera->position.x, camera->position.y, camera->position.z);
 }
 
 void set_view(const Camera *camera)
@@ -106,31 +110,6 @@ void rotate_camera(Camera *camera, double horizontal, double vertical)
     {
         camera->rotation.x -= 360.0;
     }
-}
-
-void step_camera_forward(Camera *camera, double time)
-{
-    double distance = time * 10.0;
-    double move_distance = distance * 20;
-    double angle = degree_to_radian(camera->rotation.z);
-    camera->speed.z -= cos(angle) * move_distance;
-    camera->speed.x -= sin(angle) * move_distance;
-}
-
-void step_camera_backward(Camera *camera)
-{
-}
-
-void step_camera_left(Camera *camera)
-{
-}
-
-void step_camera_right(Camera *camera)
-{
-}
-
-void jump_camera(Camera *camera)
-{
 }
 
 void move_camera_x(struct Camera *camera, double distance, Room *room)

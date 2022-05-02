@@ -16,6 +16,7 @@ typedef struct Entity
     vec3 position;
     vec3 rotation;
     vec3 speed;
+    double radius;
 
 } Entity;
 
@@ -46,7 +47,7 @@ void set_material(const Material *material);
 /**
  * Update the scene.
  */
-void update_scene(Scene *scene, double time);
+void update_scene(Scene *scene, Camera *camera, double time);
 
 /**
  * Render the scene objects.

@@ -14,7 +14,7 @@ typedef struct Camera
     vec3 rotation;
     vec3 speed;
     int head_level;
-    bool move_forward, move_backward, move_left, move_right, move_up;
+    bool move_forward, move_backward, move_left, move_right, move_up, kick;
 } Camera;
 
 /**

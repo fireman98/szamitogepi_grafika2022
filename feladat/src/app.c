@@ -100,7 +100,7 @@ void reshape(GLsizei width, GLsizei height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(
-        -.08, .08,
+        -.10666, .10666,
         -.06, .06,
         .1, 5000);
 }
@@ -137,8 +137,11 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_D:
                 app->camera.move_right = true;
                 break;
-            case SDL_SCANCODE_LSHIFT:
-                // set_camera_vertical_speed(&(app->camera), 1.0);
+            case SDL_SCANCODE_SPACE:
+                app->camera.move_up = true;
+                break;
+            case SDL_SCANCODE_C:
+                app->camera.kick = true;
                 break;
             case SDL_SCANCODE_LCTRL:
                 // set_camera_vertical_speed(&(app->camera), -1.0);
@@ -181,6 +184,12 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_D:
                 app->camera.move_right = false;
                 break;
+            case SDL_SCANCODE_SPACE:
+                app->camera.move_up = false;
+                break;
+            case SDL_SCANCODE_C:
+                app->camera.kick = false;
+                break;
             case SDL_SCANCODE_LSHIFT:
             case SDL_SCANCODE_LCTRL:
                 break;
@@ -220,7 +229,7 @@ void update_app(App *app)
     app->uptime = current_time;
 
     update_camera(&(app->camera), elapsed_time, &(app->scene.room));
-    update_scene(&(app->scene), elapsed_time);
+    update_scene(&(app->scene), &(app->camera), elapsed_time);
 }
 
 void render_app(App *app)
