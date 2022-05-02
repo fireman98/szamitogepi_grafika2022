@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "*.ejs": "html",
+    "load.h": "c",
+    "app.h": "c",
+    "camera.h": "c",
+    "gl.h": "c",
+    "utils.h": "c",
+    "model.h": "c",
+    "math.h": "c"
+  }
+}
