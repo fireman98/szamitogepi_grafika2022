@@ -15,16 +15,20 @@ void init_camera(Camera *camera)
     camera->speed.y = -5.0;
     camera->speed.z = 0.0;
     camera->head_level = 50.0;
-    camera->move_forward = camera->move_backward = camera->move_left = camera->move_right = camera->move_up = camera->kick = false;
+    camera->move_forward = camera->move_backward = camera->move_left = camera->move_right = camera->move_up = camera->kick = camera->shoot = camera->run = false;
 }
 
 void update_camera(Camera *camera, double time, Room *room)
 {
 
     double distance, move_distance;
+    double run_speed = 1;
+
+    if (camera->run)
+        run_speed = 2;
 
     distance = time * 10.0;
-    move_distance = distance * 20;
+    move_distance = distance * run_speed * 20;
 
     double speed_diff = pow(0.01036955548946418186686576786732, time);
 

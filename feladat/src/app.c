@@ -143,9 +143,11 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_C:
                 app->camera.kick = true;
                 break;
-            case SDL_SCANCODE_LCTRL:
-                // set_camera_vertical_speed(&(app->camera), -1.0);
+            case SDL_SCANCODE_LSHIFT:
+                app->camera.run = true;
                 break;
+            case SDL_SCANCODE_LCTRL:
+                app->camera.shoot = true;
             // TODO: a lightningnak is legyen speedje
             case SDL_SCANCODE_KP_4:
                 set_lightning_z_position(&(app->scene.lighting), -1);
@@ -191,7 +193,10 @@ void handle_app_events(App *app)
                 app->camera.kick = false;
                 break;
             case SDL_SCANCODE_LSHIFT:
+                app->camera.run = false;
+                break;
             case SDL_SCANCODE_LCTRL:
+                app->camera.shoot = false;
                 break;
             default:
                 break;

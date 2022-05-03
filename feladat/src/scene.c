@@ -11,7 +11,7 @@
 void init_scene(Scene *scene)
 {
     load_model(&(scene->sun.model), "assets/models/duck.obj");
-    load_model(&(scene->ball.model), "assets/models/duck.obj");
+    load_model(&(scene->ball.model), "assets/models/ball3.obj");
 
     scene->sun.texture = load_texture("assets/textures/duck.jpg");
     scene->ball.texture = load_texture("assets/textures/duck.jpg");
@@ -19,11 +19,22 @@ void init_scene(Scene *scene)
     scene->sun.radius = 50.0;
     scene->ball.radius = 25.0;
 
-    scene->ball.position.x = 0.0;
+    scene->sun.rotation.x = scene->sun.rotation.y = scene->sun.rotation.z = 0.0;
+
+    scene->ball.position.x = 50.0;
+    scene->ball.position.y = 300.0;
     scene->ball.position.z = 0.0;
-    scene->ball.position.y = 200.0;
 
     scene->ball.speed.x = scene->ball.speed.y = scene->ball.speed.z = 0.0;
+
+    scene->ball.lighting.ambient[0] = scene->ball.lighting.ambient[1] = scene->ball.lighting.ambient[2] = scene->ball.lighting.ambient[3] = 1.0;
+    scene->ball.lighting.diffuse[0] = scene->ball.lighting.diffuse[1] = scene->ball.lighting.diffuse[2] = scene->ball.lighting.diffuse[3] = 1.0;
+    scene->ball.lighting.specular[0] = scene->ball.lighting.specular[1] = scene->ball.lighting.specular[2] = scene->ball.lighting.specular[3] = 1.0;
+
+    scene->ball.material.ambient.red = scene->ball.material.ambient.green = scene->ball.material.ambient.blue;
+    scene->ball.material.diffuse.red = scene->ball.material.diffuse.green = scene->ball.material.diffuse.blue;
+    scene->ball.material.specular.red = scene->ball.material.specular.green = scene->ball.material.specular.blue;
+    scene->ball.material.shininess = 127;
 
     scene->room.front = load_texture("assets//textures//wall.jpg");
     scene->room.left = load_texture("assets//textures//wall.jpg");
@@ -35,8 +46,6 @@ void init_scene(Scene *scene)
     scene->room.size.x = 2400.0;
     scene->room.size.y = 400.0;
     scene->room.size.z = 1000.0;
-
-    scene->ball.position.x = scene->ball.position.y = scene->ball.position.z = 0;
 
     scene->material.ambient.red = 1.0;
     scene->material.ambient.green = 1.0;
@@ -68,7 +77,7 @@ void init_scene(Scene *scene)
     scene->lighting.specular[3] = 1.0f;
 
     scene->lighting.position[0] = 10.0f;
-    scene->lighting.position[1] = 0.0f;
+    scene->lighting.position[1] = 300.0f;
     scene->lighting.position[2] = 10.0f;
     scene->lighting.position[3] = 1.0f;
 }
@@ -123,7 +132,7 @@ void set_lightning_x_position(Lighting *lighting, double speed)
 void update_entity(Entity *entity, Camera *camera, Room *room, double elapsed_time)
 {
     double base_speed = elapsed_time * 10;
-    double speed_diff = pow(0.99, base_speed * 10);
+    double speed_diff = pow(0.99, base_speed * 8);
 
     // Levegő miatti lassulás
     entity->speed.x *= speed_diff;
@@ -140,25 +149,27 @@ void update_entity(Entity *entity, Camera *camera, Room *room, double elapsed_ti
     // Gravitáció
     if (bottom > 0)
     {
-        entity->speed.y -= 30 * elapsed_time;
+        entity->speed.y -= 80 * elapsed_time;
     }
 
     //Ütközés
-    if (camera->position.x > left &&
-        camera->position.x < right &&
-        camera->position.y - camera->head_level + 1 > bottom &&
-        camera->position.y + 1 - camera->head_level < top &&
-        camera->position.z > back &&
-        camera->position.z < front)
+    if (camera->position.x + 20.0 > left &&
+        camera->position.x - 20.0 < right &&
+        camera->position.y > bottom &&
+        camera->position.y - camera->head_level < top &&
+        camera->position.z + 20.0 > back &&
+        camera->position.z - 20.0 < front)
     {
+        double shot_power = 1;
+        if (camera->shoot)
+            shot_power = 4;
 
-        entity->speed.x += (entity->position.x - camera->position.x) * 6;
-        // entity->speed.y += diffY;
-        entity->speed.z += (entity->position.z - camera->position.z) * 6;
+        entity->speed.x += (camera->speed.x - entity->speed.x) * 1.8 * shot_power;
+        entity->speed.z += (camera->speed.z - entity->speed.z) * 1.8 * shot_power;
 
         if (camera->kick)
         {
-            entity->speed.y += 50;
+            entity->speed.y += 80;
         }
     };
 
@@ -198,17 +209,17 @@ void update_entity(Entity *entity, Camera *camera, Room *room, double elapsed_ti
 
     if ((right > room->size.x && entity->speed.x > 0) || (left < -room->size.x && entity->speed.x < 0))
     {
-        entity->speed.x *= -1;
+        entity->speed.x *= -0.8;
     }
 
     if ((top > room->size.y && entity->speed.y > 0) || (bottom < 0 && entity->speed.y < 0))
     {
-        entity->speed.y *= -1;
+        entity->speed.y *= -0.8;
     }
 
     if ((front > room->size.z && entity->speed.z > 0) || (back < -room->size.z && entity->speed.z < 0))
     {
-        entity->speed.z *= -1;
+        entity->speed.z *= -0.8;
     }
 }
 
