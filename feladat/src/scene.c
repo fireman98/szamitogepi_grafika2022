@@ -1,5 +1,7 @@
 #include "scene.h"
 #include "stdio.h"
+#include "stdlib.h"
+#include "math.h"
 
 #include <obj/load.h>
 #include <obj/draw.h>
@@ -141,7 +143,7 @@ void pop_entity(Scene *scene)
     }
 }
 
-void set_lighting(Lighting *lighting)
+void set_lighting(const Lighting *lighting)
 {
     glLightfv(GL_LIGHT0, GL_AMBIENT, lighting->ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lighting->diffuse);
@@ -330,7 +332,7 @@ void render_scene(const Scene *scene)
     render_environment(scene);
 }
 
-void render_entity(Entity *entity)
+void render_entity(const Entity *entity)
 {
     glBindTexture(GL_TEXTURE_2D, entity->texture);
     glPushMatrix();

@@ -7,6 +7,7 @@
  */
 int main(int argc, char *argv[])
 {
+    printf("INIT: %d %s\n", argc, *argv);
     App app;
 
     init_app(&app, 1600, 900);

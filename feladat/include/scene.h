@@ -37,6 +37,22 @@ typedef struct Scene
 void init_scene(Scene *scene);
 
 /**
+ * Initializes a new entity as a ball
+ */
+void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, float z);
+
+/**
+ * Push an entity to the entites array
+ * Then initalize it as a ball and put it front of the camera
+ */
+void push_entity(Scene *scene, Camera *camera);
+
+/*
+ * Remove the last entity from the entities array
+ */
+void pop_entity(Scene *scene);
+
+/**
  * Set the lighting of the scene.
  */
 void set_lighting();
@@ -55,6 +71,26 @@ void update_scene(Scene *scene, Camera *camera, double time);
  * Render the scene objects.
  */
 void render_scene(const Scene *scene);
+
+/**
+ * Render an entity
+ */
+void render_entity(const Entity *entity);
+
+/**
+ * Render the environment
+ */
+void render_environment(const Scene *scene);
+
+/*
+ * Draw room
+ */
+void draw_room_left(Room room);
+void draw_room_right(Room room);
+void draw_room_front(Room room);
+void draw_room_back(Room room);
+void draw_room_top(Room room);
+void draw_room_bottom(Room room);
 
 /**
  * @brief Set the global lightning position on axis x

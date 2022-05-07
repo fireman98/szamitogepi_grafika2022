@@ -39,6 +39,30 @@ void set_view(const Camera *camera);
 void rotate_camera(Camera *camera, double horizontal, double vertical);
 
 /**
+ * Move camera along the x axios
+ */
+
+void move_camera_x(struct Camera *camera, double distance, Room *room);
+
+/**
+ * Move camera along the y axios
+ */
+
+void move_camera_y(struct Camera *camera, double distance, Room *room);
+
+/**
+ * Move camera along the z axios
+ */
+
+void move_camera_z(struct Camera *camera, double distance, Room *room);
+
+/**
+ * Force camera into room
+ *
+ */
+void can_move(struct Camera *camera, Room *room);
+
+/**
  * Set the speed of forward and backward motion.
  */
 void set_camera_speed(Camera *camera, double speed);
