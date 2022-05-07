@@ -11,30 +11,15 @@
 void init_scene(Scene *scene)
 {
     load_model(&(scene->sun.model), "assets/models/duck.obj");
-    load_model(&(scene->ball.model), "assets/models/ball3.obj");
-
     scene->sun.texture = load_texture("assets/textures/duck.jpg");
-    scene->ball.texture = load_texture("assets/textures/duck.jpg");
 
     scene->sun.radius = 50.0;
-    scene->ball.radius = 25.0;
-
     scene->sun.rotation.x = scene->sun.rotation.y = scene->sun.rotation.z = 0.0;
 
-    scene->ball.position.x = 50.0;
-    scene->ball.position.y = 300.0;
-    scene->ball.position.z = 0.0;
+    scene->entityCount = 1;
+    scene->entities = malloc(scene->entityCount * sizeof *scene->entities);
 
-    scene->ball.speed.x = scene->ball.speed.y = scene->ball.speed.z = 0.0;
-
-    scene->ball.lighting.ambient[0] = scene->ball.lighting.ambient[1] = scene->ball.lighting.ambient[2] = scene->ball.lighting.ambient[3] = 1.0;
-    scene->ball.lighting.diffuse[0] = scene->ball.lighting.diffuse[1] = scene->ball.lighting.diffuse[2] = scene->ball.lighting.diffuse[3] = 1.0;
-    scene->ball.lighting.specular[0] = scene->ball.lighting.specular[1] = scene->ball.lighting.specular[2] = scene->ball.lighting.specular[3] = 1.0;
-
-    scene->ball.material.ambient.red = scene->ball.material.ambient.green = scene->ball.material.ambient.blue;
-    scene->ball.material.diffuse.red = scene->ball.material.diffuse.green = scene->ball.material.diffuse.blue;
-    scene->ball.material.specular.red = scene->ball.material.specular.green = scene->ball.material.specular.blue;
-    scene->ball.material.shininess = 127;
+    init_ball(&(scene->entities[0]), "assets/models/obj5.obj", "assets/textures/duck.jpg", 50, 50);
 
     scene->room.front = load_texture("assets//textures//wall.jpg");
     scene->room.left = load_texture("assets//textures//wall.jpg");
@@ -80,6 +65,80 @@ void init_scene(Scene *scene)
     scene->lighting.position[1] = 300.0f;
     scene->lighting.position[2] = 10.0f;
     scene->lighting.position[3] = 1.0f;
+}
+
+void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, float z)
+{
+    load_model(&(ball->model), modelPath);
+    ball->texture = load_texture(texturePath);
+
+    ball->radius = 25.0;
+
+    ball->position.x = x;
+    ball->position.y = 250.0;
+    ball->position.z = z;
+
+    ball->rotation.x = ball->rotation.y = ball->rotation.z = 0.0;
+    ball->speed.x = ball->speed.y = ball->speed.z = 0.0;
+
+    ball->lighting.ambient[0] = ball->lighting.ambient[1] = ball->lighting.ambient[2] = ball->lighting.ambient[3] = 1.0;
+    ball->lighting.diffuse[0] = ball->lighting.diffuse[1] = ball->lighting.diffuse[2] = ball->lighting.diffuse[3] = 1.0;
+    ball->lighting.specular[0] = ball->lighting.specular[1] = ball->lighting.specular[2] = ball->lighting.specular[3] = 1.0;
+
+    ball->material.ambient.red = ball->material.ambient.green = ball->material.ambient.blue = 1.0;
+    ball->material.diffuse.red = ball->material.diffuse.green = ball->material.diffuse.blue = 1.0;
+    ball->material.specular.red = ball->material.specular.green = ball->material.specular.blue = 1.0;
+    ball->material.shininess = 127;
+}
+
+void push_entity(Scene *scene, Camera *camera)
+{
+    if (scene->entityCount >= 10)
+        return;
+
+    Entity *entity_pointer;
+
+    scene->entityCount += 1;
+    entity_pointer = (Entity *)realloc(scene->entities, scene->entityCount * sizeof(Entity));
+
+    if (entity_pointer == NULL)
+    {
+        printf("Unable to reallocate memory, exiting.\n");
+        free(entity_pointer);
+        exit(0);
+    }
+    else
+    {
+        scene->entities = entity_pointer;
+
+        double angle = degree_to_radian(camera->rotation.z);
+        float x = camera->position.x - sin(angle) * 150;
+        float z = camera->position.z - cos(angle) * 150;
+        printf("%.2f %.2f %.2f\n", angle, x, z);
+        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/obj5.obj", "assets/textures/duck.jpg", x, z);
+    }
+}
+
+void pop_entity(Scene *scene)
+{
+    if (scene->entityCount <= 1)
+        return;
+
+    Entity *entity_pointer;
+
+    scene->entityCount -= 1;
+    entity_pointer = (Entity *)realloc(scene->entities, scene->entityCount * sizeof(Entity));
+
+    if (entity_pointer == NULL)
+    {
+        printf("Unable to reallocate memory, exiting.\n");
+        free(entity_pointer);
+        exit(0);
+    }
+    else
+    {
+        scene->entities = entity_pointer;
+    }
 }
 
 void set_lighting(Lighting *lighting)
@@ -129,7 +188,31 @@ void set_lightning_x_position(Lighting *lighting, double speed)
     lighting->position[1] += speed;
 }
 
-void update_entity(Entity *entity, Camera *camera, Room *room, double elapsed_time)
+void update_entity_bounding_box(Entity *entity)
+{
+    entity->boundingBox.right = entity->position.x + entity->radius;
+    entity->boundingBox.left = entity->position.x - entity->radius;
+    entity->boundingBox.top = entity->position.y + entity->radius;
+    entity->boundingBox.bottom = entity->position.y - entity->radius;
+    entity->boundingBox.front = entity->position.z + entity->radius;
+    entity->boundingBox.back = entity->position.z - entity->radius;
+}
+
+bool is_boundingbox_overlap(BoundingBox b1, BoundingBox b2)
+{
+    return !(b1.right < b2.left || b1.left > b2.right ||
+             b1.top < b2.bottom || b1.bottom > b2.top ||
+             b1.front < b2.back || b1.back > b2.front);
+}
+
+void entity_collision_handler(Entity *e1, Entity *e2)
+{
+    e1->speed.x += (e1->boundingBox.left - e2->boundingBox.left) * 0.5;
+    e1->speed.y += (e1->boundingBox.bottom - e2->boundingBox.bottom) * 0.5;
+    e1->speed.z += (e1->boundingBox.back - e2->boundingBox.back) * 0.5;
+}
+
+void update_entity(Entity *entity, Camera *camera, Room *room, Entity *entities, int entityCount, double elapsed_time)
 {
     double base_speed = elapsed_time * 10;
     double speed_diff = pow(0.99, base_speed * 8);
@@ -139,39 +222,35 @@ void update_entity(Entity *entity, Camera *camera, Room *room, double elapsed_ti
     entity->speed.y *= speed_diff;
     entity->speed.z *= speed_diff;
 
-    double right = entity->position.x + entity->radius;
-    double left = entity->position.x - entity->radius;
-    double top = entity->position.y + entity->radius;
-    double bottom = entity->position.y - entity->radius;
-    double front = entity->position.z + entity->radius;
-    double back = entity->position.z - entity->radius;
-
     // Gravitáció
-    if (bottom > 0)
+    if (entity->boundingBox.bottom > 0)
     {
         entity->speed.y -= 80 * elapsed_time;
     }
 
     //Ütközés
-    if (camera->position.x + 20.0 > left &&
-        camera->position.x - 20.0 < right &&
-        camera->position.y > bottom &&
-        camera->position.y - camera->head_level < top &&
-        camera->position.z + 20.0 > back &&
-        camera->position.z - 20.0 < front)
+    if (is_boundingbox_overlap(camera->boundingBox, entity->boundingBox))
     {
         double shot_power = 1;
         if (camera->shoot)
             shot_power = 4;
 
-        entity->speed.x += (camera->speed.x - entity->speed.x) * 1.8 * shot_power;
-        entity->speed.z += (camera->speed.z - entity->speed.z) * 1.8 * shot_power;
+        entity->speed.x += (entity->boundingBox.left - camera->boundingBox.left) * 1.8 * shot_power;
+        entity->speed.z += (entity->boundingBox.back - camera->boundingBox.back) * 1.8 * shot_power;
 
         if (camera->kick)
         {
             entity->speed.y += 80;
         }
     };
+
+    for (int i = 0; i < entityCount; i++)
+    {
+        if (entity != &(entities[i]) && is_boundingbox_overlap(entity->boundingBox, entities[i].boundingBox))
+        {
+            entity_collision_handler(&(entities[i]), entity);
+        }
+    }
 
     entity->position.x += base_speed * entity->speed.x;
     entity->position.y += base_speed * entity->speed.y;
@@ -200,24 +279,23 @@ void update_entity(Entity *entity, Camera *camera, Room *room, double elapsed_ti
     }
     else
     {
-
         angle = 0;
     }
 
     entity->rotation.x -= ((base_speed * (length)) / (2 * entity->radius * M_PI)) * 360;
     entity->rotation.y = angle;
 
-    if ((right > room->size.x && entity->speed.x > 0) || (left < -room->size.x && entity->speed.x < 0))
+    if ((entity->boundingBox.right > room->size.x && entity->speed.x > 0) || (entity->boundingBox.left < -room->size.x && entity->speed.x < 0))
     {
         entity->speed.x *= -0.8;
     }
 
-    if ((top > room->size.y && entity->speed.y > 0) || (bottom < 0 && entity->speed.y < 0))
+    if ((entity->boundingBox.top > room->size.y && entity->speed.y > 0) || (entity->boundingBox.bottom < 0 && entity->speed.y < 0))
     {
         entity->speed.y *= -0.8;
     }
 
-    if ((front > room->size.z && entity->speed.z > 0) || (back < -room->size.z && entity->speed.z < 0))
+    if ((entity->boundingBox.front > room->size.z && entity->speed.z > 0) || (entity->boundingBox.back < -room->size.z && entity->speed.z < 0))
     {
         entity->speed.z *= -0.8;
     }
@@ -228,7 +306,15 @@ void update_scene(Scene *scene, Camera *camera, double time)
     scene->sun.position.x = scene->lighting.position[0];
     scene->sun.position.y = scene->lighting.position[1];
     scene->sun.position.z = scene->lighting.position[2];
-    update_entity(&(scene->ball), camera, &(scene->room), time);
+    for (int i = 0; i < scene->entityCount; i++)
+    {
+        update_entity_bounding_box(&(scene->entities[i]));
+    }
+
+    for (int i = 0; i < scene->entityCount; i++)
+    {
+        update_entity(&(scene->entities[i]), camera, &(scene->room), scene->entities, scene->entityCount, time);
+    }
 }
 
 void render_scene(const Scene *scene)
@@ -236,7 +322,11 @@ void render_scene(const Scene *scene)
     set_material(&(scene->material));
     set_lighting(&(scene->lighting));
     render_entity(&(scene->sun));
-    render_entity(&(scene->ball));
+
+    for (int i = 0; i < scene->entityCount; i++)
+    {
+        render_entity(&(scene->entities[i]));
+    }
     render_environment(scene);
 }
 

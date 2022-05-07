@@ -16,13 +16,15 @@ typedef struct Entity
     vec3 position;
     vec3 rotation;
     vec3 speed;
+    BoundingBox boundingBox;
     double radius;
 
 } Entity;
 
 typedef struct Scene
 {
-    Entity ball;
+    Entity *entities;
+    int entityCount;
     Entity sun;
     Room room;
     Material material;

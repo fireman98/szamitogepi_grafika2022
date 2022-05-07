@@ -74,4 +74,15 @@ typedef struct
     vec3 size;
 } Room;
 
+typedef struct BoundingBox
+{
+    double top;
+    double bottom;
+    double left;
+    double right;
+    double front;
+    double back;
+
+} BoundingBox;
+
 #endif /* UTILS_H */

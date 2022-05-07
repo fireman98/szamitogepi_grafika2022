@@ -14,7 +14,7 @@ void init_camera(Camera *camera)
     camera->speed.x = 0.0;
     camera->speed.y = -5.0;
     camera->speed.z = 0.0;
-    camera->head_level = 50.0;
+    camera->head_level = 100.0;
     camera->move_forward = camera->move_backward = camera->move_left = camera->move_right = camera->move_up = camera->kick = camera->shoot = camera->run = false;
 }
 
@@ -78,6 +78,14 @@ void update_camera(Camera *camera, double time, Room *room)
         camera->speed.z -= cos(angle) * move_distance;
         camera->speed.x -= sin(angle) * move_distance;
     }
+
+    // Update BoundingBox
+    camera->boundingBox.left = camera->position.x - 20.0;
+    camera->boundingBox.right = camera->position.x + 20.0;
+    camera->boundingBox.bottom = camera->position.y - camera->head_level;
+    camera->boundingBox.top = camera->position.y;
+    camera->boundingBox.back = camera->position.z - 20.0;
+    camera->boundingBox.front = camera->position.z + 20.0;
 }
 
 void set_view(const Camera *camera)

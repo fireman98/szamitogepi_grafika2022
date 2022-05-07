@@ -167,6 +167,12 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_KP_3:
                 set_lightning_x_position(&(app->scene.lighting), -1);
                 break;
+            case SDL_SCANCODE_KP_PLUS:
+                push_entity(&(app->scene), &(app->camera));
+                break;
+            case SDL_SCANCODE_KP_MINUS:
+                pop_entity(&(app->scene));
+                break;
             default:
                 break;
             }
