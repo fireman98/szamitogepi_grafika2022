@@ -16,34 +16,34 @@ void init_scene(Scene *scene)
     srand(time(NULL));
 
     scene->help = load_texture("assets/textures/help.jpg");
-    load_model(&(scene->sun.model), "assets/models/duck.obj");
-    scene->sun.texture = load_texture("assets/textures/duck.jpg");
+    load_model(&(scene->sun.model), "assets/models/ball6.obj");
+    scene->sun.texture = NULL;
 
-    scene->sun.radius = 50.0;
+    scene->sun.radius = 75.0;
     scene->sun.rotation.x = -90.0;
     scene->sun.rotation.y = 0.0;
     scene->sun.rotation.z = 0.0;
 
     scene->sun.material.ambient.red = 1.0;
     scene->sun.material.ambient.green = 1.0;
-    scene->sun.material.ambient.blue = 1.0;
+    scene->sun.material.ambient.blue = 0.6;
     scene->sun.material.diffuse.red = 1.0;
     scene->sun.material.diffuse.green = 1.0;
-    scene->sun.material.diffuse.blue = 1.0;
+    scene->sun.material.diffuse.blue = 0.6;
     scene->sun.material.specular.red = 1.0;
     scene->sun.material.specular.green = 1.0;
-    scene->sun.material.specular.blue = 1.0;
-    scene->sun.material.shininess = 127;
+    scene->sun.material.specular.blue = 0.6;
+    scene->sun.material.shininess = 127.0;
 
     scene->entityCount = 1;
     scene->entities = malloc(scene->entityCount * sizeof *scene->entities);
 
     init_ball(&(scene->entities[0]), "assets/models/ball6.obj", 50, 50);
 
-    scene->room.front = load_texture("assets//textures//wall.jpg");
+    scene->room.front = load_texture("assets//textures//wall_front.png");
     scene->room.left = load_texture("assets//textures//wall_left.png");
-    scene->room.right = load_texture("assets//textures//wall.jpg");
-    scene->room.back = load_texture("assets//textures//wall.jpg");
+    scene->room.right = load_texture("assets//textures//wall_right.png");
+    scene->room.back = load_texture("assets//textures//wall_back.png");
     scene->room.top = load_texture("assets//textures//wall_top.png");
     scene->room.bottom = load_texture("assets//textures//wall_bottom.jpg");
 
@@ -67,7 +67,7 @@ void init_scene(Scene *scene)
     scene->lighting.specular[3] = 1.0f;
 
     scene->lighting.position[0] = 0.0f;
-    scene->lighting.position[1] = 850.0f;
+    scene->lighting.position[1] = 1250.0f;
     scene->lighting.position[2] = 0.0f;
     scene->lighting.position[3] = 1.0f;
 
@@ -80,7 +80,7 @@ void init_ball(Entity *ball, char modelPath[], float x, float z)
 {
     load_model(&(ball->model), modelPath);
 
-    ball->radius = 10.0;
+    ball->radius = 15.0;
 
     ball->position.x = x;
     ball->position.y = 250.0;
@@ -320,7 +320,7 @@ void update_scene(Scene *scene, Camera *camera, double time)
      scene->lighting.rotation[2] = -cos(degree_to_radian(camera->rotation.z));*/
 
     scene->sun.position.x = scene->lighting.position[0];
-    scene->sun.position.y = scene->lighting.position[1];
+    scene->sun.position.y = scene->lighting.position[1] + 250;
     scene->sun.position.z = scene->lighting.position[2];
     for (int i = 0; i < scene->entityCount; i++)
     {
