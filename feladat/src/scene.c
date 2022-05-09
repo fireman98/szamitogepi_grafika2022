@@ -15,6 +15,7 @@ void init_scene(Scene *scene)
 {
     srand(time(NULL));
 
+    scene->help = load_texture("assets/textures/help.jpg");
     load_model(&(scene->sun.model), "assets/models/duck.obj");
     scene->sun.texture = load_texture("assets/textures/duck.jpg");
 
@@ -37,7 +38,7 @@ void init_scene(Scene *scene)
     scene->entityCount = 1;
     scene->entities = malloc(scene->entityCount * sizeof *scene->entities);
 
-    init_ball(&(scene->entities[0]), "assets/models/ball6.obj", "assets/textures/duck.jpg", 50, 50);
+    init_ball(&(scene->entities[0]), "assets/models/ball6.obj", 50, 50);
 
     scene->room.front = load_texture("assets//textures//wall.jpg");
     scene->room.left = load_texture("assets//textures//wall_left.png");
@@ -75,11 +76,9 @@ void init_scene(Scene *scene)
     scene->lighting.rotation[2] = 0.0f;
 }
 
-void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, float z)
+void init_ball(Entity *ball, char modelPath[], float x, float z)
 {
     load_model(&(ball->model), modelPath);
-    // ball->texture = load_texture(texturePath);
-    ball->texture = NULL;
 
     ball->radius = 10.0;
 
@@ -126,7 +125,7 @@ void push_entity(Scene *scene, Camera *camera)
         float x = camera->position.x - sin(angle) * 150;
         float z = camera->position.z - cos(angle) * 150;
         printf("%.2f %.2f %.2f\n", angle, x, z);
-        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/ball6.obj", "assets/textures/duck.jpg", x, z);
+        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/ball6.obj", x, z);
     }
 }
 
@@ -365,7 +364,6 @@ void render_environment(const Scene *scene)
     GLuint boxList = glGenLists(1);
     glNewList(boxList, GL_COMPILE);
 
-    GLfloat zeros[] = {0, 0, 0};
     GLfloat ones[] = {1, 1, 1};
     const GLfloat shininess = 50;
 
@@ -484,4 +482,32 @@ void draw_room_bottom(Room room)
     glVertex3f(-room.size.x, 0, room.size.z);
 
     glEnd();
+}
+
+void render_help(const Scene *scene)
+{
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_COLOR_MATERIAL);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glColor3f(1, 1, 1);
+
+    glBindTexture(GL_TEXTURE_2D, scene->help);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3f(-1, 1, -1);
+    glTexCoord2f(1, 0);
+    glVertex3f(1, 1, -1);
+    glTexCoord2f(1, 1);
+    glVertex3f(1, -1, -1);
+    glTexCoord2f(0, 1);
+    glVertex3f(-1, -1, -1);
+    glEnd();
+
+    glDisable(GL_COLOR_MATERIAL);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_DEPTH_TEST);
 }

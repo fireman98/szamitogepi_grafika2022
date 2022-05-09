@@ -10,6 +10,7 @@ void init_app(App *app, int width, int height)
 
     app->is_running = false;
     app->uptime = 0.0;
+    app->render_help = false;
 
     error_code = SDL_Init(SDL_INIT_EVERYTHING);
     if (error_code != 0)
@@ -173,6 +174,9 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_KP_MINUS:
                 pop_entity(&(app->scene));
                 break;
+            case SDL_SCANCODE_F1:
+                app->render_help = !app->render_help;
+                break;
             default:
                 break;
             }
@@ -264,6 +268,10 @@ void render_app(App *app)
     glPushMatrix();
     set_view(&(app->camera));
     render_scene(&(app->scene));
+
+    if (app->render_help)
+        render_help(&(app->scene));
+
     glPopMatrix();
 
     SDL_GL_SwapWindow(app->window);

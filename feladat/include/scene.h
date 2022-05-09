@@ -27,6 +27,7 @@ typedef struct Scene
     Entity sun;
     Room room;
     Lighting lighting;
+    GLuint help;
 } Scene;
 
 /**
@@ -37,7 +38,7 @@ void init_scene(Scene *scene);
 /**
  * Initializes a new entity as a ball
  */
-void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, float z);
+void init_ball(Entity *ball, char modelPath[], float x, float z);
 
 /**
  * Push an entity to the entites array
@@ -107,5 +108,10 @@ void set_lightning_y_position(Lighting *lighting, double speed);
  *
  */
 void set_lightning_z_position(Lighting *lighting, double speed);
+
+/*
+ * Render help
+ */
+void render_help(const Scene *scene);
 
 #endif /* SCENE_H */
