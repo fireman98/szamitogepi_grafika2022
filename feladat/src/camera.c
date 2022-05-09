@@ -14,7 +14,7 @@ void init_camera(Camera *camera)
     camera->speed.x = 0.0;
     camera->speed.y = -5.0;
     camera->speed.z = 0.0;
-    camera->head_level = 100.0;
+    camera->head_level = 50.0;
     camera->move_forward = camera->move_backward = camera->move_left = camera->move_right = camera->move_up = camera->kick = camera->shoot = camera->run = false;
 }
 

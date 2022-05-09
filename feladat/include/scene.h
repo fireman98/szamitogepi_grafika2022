@@ -12,7 +12,6 @@ typedef struct Entity
     Model model;
     GLuint texture;
     Material material;
-    Lighting lighting;
     vec3 position;
     vec3 rotation;
     vec3 speed;
@@ -27,7 +26,6 @@ typedef struct Scene
     int entityCount;
     Entity sun;
     Room room;
-    Material material;
     Lighting lighting;
 } Scene;
 

@@ -16,41 +16,40 @@ void init_scene(Scene *scene)
     scene->sun.texture = load_texture("assets/textures/duck.jpg");
 
     scene->sun.radius = 50.0;
-    scene->sun.rotation.x = scene->sun.rotation.y = scene->sun.rotation.z = 0.0;
+    scene->sun.rotation.x = -90.0;
+    scene->sun.rotation.y = 0.0;
+    scene->sun.rotation.z = 0.0;
+
+    scene->sun.material.ambient.red = 1.0;
+    scene->sun.material.ambient.green = 1.0;
+    scene->sun.material.ambient.blue = 1.0;
+    scene->sun.material.diffuse.red = 1.0;
+    scene->sun.material.diffuse.green = 1.0;
+    scene->sun.material.diffuse.blue = 1.0;
+    scene->sun.material.specular.red = 1.0;
+    scene->sun.material.specular.green = 1.0;
+    scene->sun.material.specular.blue = 1.0;
+    scene->sun.material.shininess = 127;
 
     scene->entityCount = 1;
     scene->entities = malloc(scene->entityCount * sizeof *scene->entities);
 
-    init_ball(&(scene->entities[0]), "assets/models/obj5.obj", "assets/textures/duck.jpg", 50, 50);
+    init_ball(&(scene->entities[0]), "assets/models/ball6.obj", "assets/textures/duck.jpg", 50, 50);
 
     scene->room.front = load_texture("assets//textures//wall.jpg");
-    scene->room.left = load_texture("assets//textures//wall.jpg");
+    scene->room.left = load_texture("assets//textures//wall_left.png");
     scene->room.right = load_texture("assets//textures//wall.jpg");
     scene->room.back = load_texture("assets//textures//wall.jpg");
-    scene->room.top = load_texture("assets//textures//wall.jpg");
-    scene->room.bottom = load_texture("assets//textures//wall.jpg");
+    scene->room.top = load_texture("assets//textures//wall_top.png");
+    scene->room.bottom = load_texture("assets//textures//wall_bottom.jpg");
 
-    scene->room.size.x = 2400.0;
-    scene->room.size.y = 400.0;
-    scene->room.size.z = 1000.0;
+    scene->room.size.x = 4800.0;
+    scene->room.size.y = 4000.0;
+    scene->room.size.z = 2000.0;
 
-    scene->material.ambient.red = 1.0;
-    scene->material.ambient.green = 1.0;
-    scene->material.ambient.blue = 1.0;
-
-    scene->material.diffuse.red = 1.0;
-    scene->material.diffuse.green = 1.0;
-    scene->material.diffuse.blue = 1.0;
-
-    scene->material.specular.red = 1.0;
-    scene->material.specular.green = 1.0;
-    scene->material.specular.blue = 1.0;
-
-    scene->material.shininess = 127.0;
-
-    scene->lighting.ambient[0] = 1.0f;
-    scene->lighting.ambient[1] = 1.0f;
-    scene->lighting.ambient[2] = 1.0f;
+    scene->lighting.ambient[0] = 0.4f;
+    scene->lighting.ambient[1] = 0.4f;
+    scene->lighting.ambient[2] = 0.4f;
     scene->lighting.ambient[3] = 1.0f;
 
     scene->lighting.diffuse[0] = 1.0f;
@@ -63,18 +62,23 @@ void init_scene(Scene *scene)
     scene->lighting.specular[2] = 1.0f;
     scene->lighting.specular[3] = 1.0f;
 
-    scene->lighting.position[0] = 10.0f;
-    scene->lighting.position[1] = 300.0f;
-    scene->lighting.position[2] = 10.0f;
+    scene->lighting.position[0] = 0.0f;
+    scene->lighting.position[1] = 250.0f;
+    scene->lighting.position[2] = 0.0f;
     scene->lighting.position[3] = 1.0f;
+
+    scene->lighting.rotation[0] = 0.0f;
+    scene->lighting.rotation[1] = -1.0f;
+    scene->lighting.rotation[2] = 0.0f;
 }
 
 void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, float z)
 {
     load_model(&(ball->model), modelPath);
-    ball->texture = load_texture(texturePath);
+    // ball->texture = load_texture(texturePath);
+    ball->texture = NULL;
 
-    ball->radius = 25.0;
+    ball->radius = 10.0;
 
     ball->position.x = x;
     ball->position.y = 250.0;
@@ -83,14 +87,16 @@ void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, floa
     ball->rotation.x = ball->rotation.y = ball->rotation.z = 0.0;
     ball->speed.x = ball->speed.y = ball->speed.z = 0.0;
 
-    ball->lighting.ambient[0] = ball->lighting.ambient[1] = ball->lighting.ambient[2] = ball->lighting.ambient[3] = 1.0;
-    ball->lighting.diffuse[0] = ball->lighting.diffuse[1] = ball->lighting.diffuse[2] = ball->lighting.diffuse[3] = 1.0;
-    ball->lighting.specular[0] = ball->lighting.specular[1] = ball->lighting.specular[2] = ball->lighting.specular[3] = 1.0;
-
-    ball->material.ambient.red = ball->material.ambient.green = ball->material.ambient.blue = 1.0;
-    ball->material.diffuse.red = ball->material.diffuse.green = ball->material.diffuse.blue = 1.0;
-    ball->material.specular.red = ball->material.specular.green = ball->material.specular.blue = 1.0;
-    ball->material.shininess = 127;
+    ball->material.ambient.red = 0.0;
+    ball->material.ambient.green = 0.0;
+    ball->material.ambient.blue = 0.0;
+    ball->material.diffuse.red = 0.0;
+    ball->material.diffuse.green = 1.0;
+    ball->material.diffuse.blue = 1.0;
+    ball->material.specular.red = 1.0;
+    ball->material.specular.green = 0.0;
+    ball->material.specular.blue = 0.0;
+    ball->material.shininess = 50;
 }
 
 void push_entity(Scene *scene, Camera *camera)
@@ -117,7 +123,7 @@ void push_entity(Scene *scene, Camera *camera)
         float x = camera->position.x - sin(angle) * 150;
         float z = camera->position.z - cos(angle) * 150;
         printf("%.2f %.2f %.2f\n", angle, x, z);
-        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/obj5.obj", "assets/textures/duck.jpg", x, z);
+        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/ball6.obj", "assets/textures/duck.jpg", x, z);
     }
 }
 
@@ -149,6 +155,9 @@ void set_lighting(const Lighting *lighting)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lighting->diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, lighting->specular);
     glLightfv(GL_LIGHT0, GL_POSITION, lighting->position);
+    // glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30);
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lighting->rotation);
+    //  printf("%.2f %.2f %.2f \n", lighting->rotation[0], lighting->rotation[1], lighting->rotation[2]);
 }
 
 void set_material(const Material *material)
@@ -171,23 +180,22 @@ void set_material(const Material *material)
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_material_color);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_material_color);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_material_color);
-
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &(material->shininess));
-}
-
-void set_lightning_z_position(Lighting *lighting, double speed)
-{
-    lighting->position[0] += speed;
-}
-
-void set_lightning_y_position(Lighting *lighting, double speed)
-{
-    lighting->position[2] += speed;
 }
 
 void set_lightning_x_position(Lighting *lighting, double speed)
 {
-    lighting->position[1] += speed;
+    lighting->position[0] += speed * 50;
+}
+
+void set_lightning_z_position(Lighting *lighting, double speed)
+{
+    lighting->position[2] += speed * 50;
+}
+
+void set_lightning_y_position(Lighting *lighting, double speed)
+{
+    lighting->position[1] += speed * 50;
 }
 
 void update_entity_bounding_box(Entity *entity)
@@ -305,6 +313,10 @@ void update_entity(Entity *entity, Camera *camera, Room *room, Entity *entities,
 
 void update_scene(Scene *scene, Camera *camera, double time)
 {
+    /* scene->lighting.rotation[0] = -sin(degree_to_radian(camera->rotation.z));
+     scene->lighting.rotation[1] = sin(degree_to_radian(camera->rotation.x));
+     scene->lighting.rotation[2] = -cos(degree_to_radian(camera->rotation.z));*/
+
     scene->sun.position.x = scene->lighting.position[0];
     scene->sun.position.y = scene->lighting.position[1];
     scene->sun.position.z = scene->lighting.position[2];
@@ -321,7 +333,6 @@ void update_scene(Scene *scene, Camera *camera, double time)
 
 void render_scene(const Scene *scene)
 {
-    set_material(&(scene->material));
     set_lighting(&(scene->lighting));
     render_entity(&(scene->sun));
 
@@ -335,6 +346,7 @@ void render_scene(const Scene *scene)
 void render_entity(const Entity *entity)
 {
     glBindTexture(GL_TEXTURE_2D, entity->texture);
+    set_material(&(entity->material));
     glPushMatrix();
     glTranslatef(entity->position.x, entity->position.y, entity->position.z);
     glScalef(entity->radius, entity->radius, entity->radius);
@@ -352,9 +364,12 @@ void render_environment(const Scene *scene)
 
     GLfloat zeros[] = {0, 0, 0};
     GLfloat ones[] = {1, 1, 1};
+    const GLfloat shininess = 50;
 
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, zeros);
     glMaterialfv(GL_FRONT, GL_AMBIENT, ones);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, ones);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, ones);
+    glMaterialfv(GL_FRONT, GL_SHININESS, &(shininess));
     draw_room_left(scene->room);
     draw_room_right(scene->room);
     draw_room_front(scene->room);
@@ -431,12 +446,16 @@ void draw_room_top(Room room)
     glBindTexture(GL_TEXTURE_2D, room.top);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_EXT_CLAMP_TO_EDGE);
     glBegin(GL_QUADS);
+    glNormal3f(0, -1, 0);
     glTexCoord2f(1.0, 1.0);
     glVertex3f(room.size.x, room.size.y, room.size.z);
+    glNormal3f(0, -1, 0);
     glTexCoord2f(1.0, 0.0);
     glVertex3f(room.size.x, room.size.y, -room.size.z);
+    glNormal3f(0, -1, 0);
     glTexCoord2f(0.0, 0.0);
     glVertex3f(-room.size.x, room.size.y, -room.size.z);
+    glNormal3f(0, -1, 0);
     glTexCoord2f(0.0, 1.0);
     glVertex3f(-room.size.x, room.size.y, room.size.z);
 
@@ -448,12 +467,16 @@ void draw_room_bottom(Room room)
     glBindTexture(GL_TEXTURE_2D, room.bottom);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_EXT_CLAMP_TO_EDGE);
     glBegin(GL_QUADS);
+    glNormal3f(0, 1, 0);
     glTexCoord2f(1.0, 1.0);
     glVertex3f(room.size.x, 0, room.size.z);
+    glNormal3f(0, 1, 0);
     glTexCoord2f(1.0, 0.0);
     glVertex3f(room.size.x, 0, -room.size.z);
+    glNormal3f(0, 1, 0);
     glTexCoord2f(0.0, 0.0);
     glVertex3f(-room.size.x, 0, -room.size.z);
+    glNormal3f(0, 1, 0);
     glTexCoord2f(0.0, 1.0);
     glVertex3f(-room.size.x, 0, room.size.z);
 

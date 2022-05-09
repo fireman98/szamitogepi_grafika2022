@@ -102,7 +102,7 @@ void reshape(GLsizei width, GLsizei height)
     glFrustum(
         -.10666, .10666,
         -.06, .06,
-        .1, 5000);
+        .1, 10000);
 }
 
 void handle_app_events(App *app)
@@ -148,7 +148,7 @@ void handle_app_events(App *app)
                 break;
             case SDL_SCANCODE_LCTRL:
                 app->camera.shoot = true;
-            // TODO: a lightningnak is legyen speedje
+                break;
             case SDL_SCANCODE_KP_4:
                 set_lightning_z_position(&(app->scene.lighting), -1);
                 break;
@@ -220,6 +220,19 @@ void handle_app_events(App *app)
             break;
         case SDL_MOUSEBUTTONUP:
             is_mouse_down = false;
+            break;
+        case SDL_WINDOWEVENT:
+            switch (event.window.event)
+            {
+            case SDL_WINDOWEVENT_RESIZED:
+                reshape(event.window.data1, event.window.data2);
+                printf("Window %d resized to %dx%d",
+                       event.window.windowID, event.window.data1,
+                       event.window.data2);
+                break;
+            default:
+                break;
+            }
             break;
         case SDL_QUIT:
             app->is_running = false;

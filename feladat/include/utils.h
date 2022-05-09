@@ -2,6 +2,8 @@
 #define UTILS_H
 #include <GL/gl.h>
 
+#include <obj/model.h>
+
 #define M_PI 3.14159265358979323846
 
 /**
@@ -61,6 +63,7 @@ typedef struct Lighting
     float diffuse[4];
     float specular[4];
     float position[4];
+    float rotation[3];
 } Lighting;
 
 /**
