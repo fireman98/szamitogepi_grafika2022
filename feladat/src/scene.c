@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
+#include <time.h>
 
 #include <obj/load.h>
 #include <obj/draw.h>
@@ -12,6 +13,8 @@
 
 void init_scene(Scene *scene)
 {
+    srand(time(NULL));
+
     load_model(&(scene->sun.model), "assets/models/duck.obj");
     scene->sun.texture = load_texture("assets/textures/duck.jpg");
 
@@ -63,7 +66,7 @@ void init_scene(Scene *scene)
     scene->lighting.specular[3] = 1.0f;
 
     scene->lighting.position[0] = 0.0f;
-    scene->lighting.position[1] = 250.0f;
+    scene->lighting.position[1] = 850.0f;
     scene->lighting.position[2] = 0.0f;
     scene->lighting.position[3] = 1.0f;
 
@@ -90,12 +93,12 @@ void init_ball(Entity *ball, char modelPath[], char texturePath[], float x, floa
     ball->material.ambient.red = 0.0;
     ball->material.ambient.green = 0.0;
     ball->material.ambient.blue = 0.0;
-    ball->material.diffuse.red = 0.0;
-    ball->material.diffuse.green = 1.0;
-    ball->material.diffuse.blue = 1.0;
-    ball->material.specular.red = 1.0;
-    ball->material.specular.green = 0.0;
-    ball->material.specular.blue = 0.0;
+    ball->material.diffuse.red = ((float)rand()) / RAND_MAX;
+    ball->material.diffuse.green = ((float)rand()) / RAND_MAX;
+    ball->material.diffuse.blue = ((float)rand()) / RAND_MAX;
+    ball->material.specular.red = ((float)rand()) / RAND_MAX;
+    ball->material.specular.green = ((float)rand()) / RAND_MAX;
+    ball->material.specular.blue = ((float)rand()) / RAND_MAX;
     ball->material.shininess = 50;
 }
 
