@@ -25,3 +25,7 @@ Az égen látható a nap, ami a fény kiindulópontja. A nap pozíciója állít
 ## Bővíthetőség
 
 Ha lesz rá idő, akkor azt is megcsinálom, hogy a labdát a kapuba rúgva egy eredményjelzőn megjelenjenek a gólok.
+
+## Assets
+
+https://drive.google.com/file/d/1gkRSx5dbKQWQLnOD4c0YbFeNDRlLB_Ps/view?usp=sharing
