@@ -15,8 +15,8 @@ void init_scene(Scene *scene)
 {
     srand(time(NULL));
 
-    scene->help = load_texture("assets/textures/help.jpg");
-    load_model(&(scene->sun.model), "assets/models/ball6.obj");
+    scene->help = load_texture("assets/textures/help.png");
+    load_model(&(scene->sun.model), "assets/models/ball.obj");
     scene->sun.texture = 0;
 
     scene->sun.radius = 75.0;
@@ -38,12 +38,12 @@ void init_scene(Scene *scene)
     scene->entityCount = 1;
     scene->entities = malloc(scene->entityCount * sizeof *scene->entities);
 
-    init_ball(&(scene->entities[0]), "assets/models/ball6.obj", 50, 50);
+    init_ball(&(scene->entities[0]), "assets/models/ball.obj", 50, 50);
 
-    scene->room.front = load_texture("assets//textures//wall_front.png");
-    scene->room.left = load_texture("assets//textures//wall_left.png");
-    scene->room.right = load_texture("assets//textures//wall_right.png");
-    scene->room.back = load_texture("assets//textures//wall_back.png");
+    scene->room.front = load_texture("assets//textures//wall_front.jpg");
+    scene->room.left = load_texture("assets//textures//wall_left.jpg");
+    scene->room.right = load_texture("assets//textures//wall_right.jpg");
+    scene->room.back = load_texture("assets//textures//wall_back.jpg");
     scene->room.top = load_texture("assets//textures//wall_top.png");
     scene->room.bottom = load_texture("assets//textures//wall_bottom.jpg");
 
@@ -125,7 +125,7 @@ void push_entity(Scene *scene, Camera *camera)
         float x = camera->position.x - sin(angle) * 150;
         float z = camera->position.z - cos(angle) * 150;
         printf("%.2f %.2f %.2f\n", angle, x, z);
-        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/ball6.obj", x, z);
+        init_ball(&(scene->entities[scene->entityCount - 1]), "assets/models/ball.obj", x, z);
     }
 }
 
@@ -508,13 +508,13 @@ void render_help(const Scene *scene)
     glBindTexture(GL_TEXTURE_2D, scene->help);
     glBegin(GL_QUADS);
     glTexCoord2f(0, 0);
-    glVertex3f(-1, 1, -1);
+    glVertex3f(-1, 1, -1.5);
     glTexCoord2f(1, 0);
-    glVertex3f(1, 1, -1);
+    glVertex3f(1, 1, -1.5);
     glTexCoord2f(1, 1);
-    glVertex3f(1, -1, -1);
+    glVertex3f(1, -1, -1.5);
     glTexCoord2f(0, 1);
-    glVertex3f(-1, -1, -1);
+    glVertex3f(-1, -1, -1.5);
     glEnd();
 
     glDisable(GL_COLOR_MATERIAL);
