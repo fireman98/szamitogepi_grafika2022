@@ -17,7 +17,7 @@ void init_scene(Scene *scene)
 
     scene->help = load_texture("assets/textures/help.jpg");
     load_model(&(scene->sun.model), "assets/models/ball6.obj");
-    scene->sun.texture = NULL;
+    scene->sun.texture = 0;
 
     scene->sun.radius = 75.0;
     scene->sun.rotation.x = -90.0;
@@ -347,7 +347,15 @@ void render_scene(const Scene *scene)
 
 void render_entity(const Entity *entity)
 {
-    glBindTexture(GL_TEXTURE_2D, entity->texture);
+
+    if (!entity->texture)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glBindTexture(GL_TEXTURE_2D, entity->texture);
+    }
     set_material(&(entity->material));
     glPushMatrix();
     glTranslatef(entity->position.x, entity->position.y, entity->position.z);
@@ -357,6 +365,8 @@ void render_entity(const Entity *entity)
     glRotatef(entity->rotation.x, 1, 0, 0);
     draw_model(&(entity->model));
     glPopMatrix();
+
+    glEnable(GL_TEXTURE_2D);
 }
 
 void render_environment(const Scene *scene)
